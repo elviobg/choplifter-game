@@ -1,0 +1,35 @@
+#player {
+  width: 256px;
+  height: 66px;
+  position: absolute;
+  left: 8px;
+  top: 179px;
+  background-image: url(../assets/imgs/player.png);
+}
+
+#enemyHelicopter {
+  width: 256px;
+  height: 66px;
+  position: absolute;
+  left: 689px;
+  top: 253px;
+  background-image: url(../assets/imgs/enemyHelicopter.png);
+}
+
+#enemyTruck {
+  width: 165px;
+  height: 70px;
+  position: absolute;
+  left: 775px;
+  top: 447px;
+  background-image: url(../assets/imgs/enemyTruck.png);
+}
+
+#survivor {
+  width: 44px;
+  height: 51px;
+  position: absolute;
+  left: 10px;
+  top: 464px;
+  background-image: url(../assets/imgs/survivor.png);
+}

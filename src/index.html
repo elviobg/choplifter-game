@@ -5,12 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/game.css" rel="stylesheet" type="text/css" />
     <title>Choplifter</title>
   </head>
   <body>
     <div id="container">
       <div id="background">
-        <div id="inicio">
+        <div id="start" onclick="start()">
           <h1>Choplifter - Resgate!</h1>
           <p>
             Utilize a tecla W para movimentar o helicóptero para cima, a tecla S
@@ -21,4 +22,7 @@
       </div>
     </div>
   </body>
+  <script type="text/javascript" src="./js/jquery-3.6.0.min.js"></script>
+  <script type="text/javascript" src="./js/jquery-collision-1.0.2.min.js"></script>
+  <script type="text/javascript" src="./js/game.js"></script>
 </html>
