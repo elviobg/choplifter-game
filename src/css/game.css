@@ -33,3 +33,36 @@
   top: 464px;
   background-image: url(../assets/imgs/survivor.png);
 }
+
+.playerAnimation {
+  background-image: url(../assets/imgs/player.png);
+  animation: playHelicopters 0.5s steps(2) infinite;
+}
+
+.enemyHelicopterAnimation {
+  background-image: url(../assets/imgs/playHelicopters.png);
+  animation: playHelicopters 0.5s steps(2) infinite;
+}
+
+.survivorAnimation {
+  background-image: url(../assets/imgs/amigo.png);
+  animation: playSurvivor 0.9s steps(12) infinite;
+}
+
+@keyframes playHelicopters {
+  from {
+    background-position: 0px;
+  }
+  to {
+    background-position: -512px;
+  }
+}
+
+@keyframes playSurvivor {
+  from {
+    background-position: 0px;
+  }
+  to {
+    background-position: -528px;
+  }
+}
