@@ -49,6 +49,13 @@
   animation: playSurvivor 0.9s steps(12) infinite;
 }
 
+#fire {
+	width: 50px;
+	height: 8px;
+	position: absolute;
+	background-image: url(../assets/imgs/fire.png);
+}
+
 @keyframes playHelicopters {
   from {
     background-position: 0px;

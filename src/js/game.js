@@ -1,6 +1,7 @@
 const game = {
   time: setInterval(loop, 30),
   actions: [],
+  canFire: true,
 };
 
 const INPUTS = {
@@ -10,26 +11,27 @@ const INPUTS = {
 };
 
 const LIMITS = {
-    PLAYER: {
-        TOP: 2,
-        BOTTOM: 434,
-    },
-    ENEMY_HELICOPTER: {
-        LEFT: 0,
-        RIGHT: 694,
-    },
-    ENEMY_TRUCK: {
-        LEFT: 0,
-        RIGHT: 775,
-    },
-    SURVIVOR: {
-        LEFT: 0,
-        RIGHT: 906,
-    },
+  PLAYER: {
+    TOP: 2,
+    BOTTOM: 434,
+  },
+  ENEMY_HELICOPTER: {
+    LEFT: 0,
+    RIGHT: 694,
+  },
+  ENEMY_TRUCK: {
+    LEFT: 0,
+    RIGHT: 775,
+  },
+  SURVIVOR: {
+    LEFT: 0,
+    RIGHT: 906,
+  },
 };
 
 const velocidade = 5;
 let posicaoY;
+var tempoDisparo = null;
 
 function start() {
   $("#start").hide();
@@ -70,13 +72,17 @@ function movePLayer() {
   const playerPositionTop = parseInt($("#player").css("top"));
   if (game.actions[INPUTS.up] && playerPositionTop > LIMITS.PLAYER.TOP) {
     $("#player").css("top", playerPositionTop - 10);
-  } else if (game.actions[INPUTS.down] && playerPositionTop <= LIMITS.PLAYER.BOTTOM) {
+  } else if (
+    game.actions[INPUTS.down] &&
+    playerPositionTop <= LIMITS.PLAYER.BOTTOM
+  ) {
     $("#player").css("top", playerPositionTop + 10);
   }
 }
 
 function playerFire() {
   if (game.actions[INPUTS.fire]) {
+    fire();
   }
 }
 
@@ -110,5 +116,30 @@ function moveSurvivor() {
 
   if (posicaoX > LIMITS.SURVIVOR.RIGHT) {
     $("#survivor").css("left", LIMITS.SURVIVOR.LEFT);
+  }
+}
+
+function fire() {
+  if (game.canFire) {
+    game.canFire = false;
+    const topo = parseInt($("#player").css("top"));
+    const posicaoX = parseInt($("#player").css("left"));
+    const tiroX = posicaoX + 190;
+    const topoTiro = topo + 42;
+    $("#background").append("<div id='fire'></div");
+    $("#fire").css("top", topoTiro);
+    $("#fire").css("left", tiroX);
+    tempoDisparo= window.setInterval(executaDisparo, 30);
+  }
+}
+
+function executaDisparo() {
+  const posicaoX = parseInt($("#fire").css("left"));
+  $("#fire").css("left", posicaoX + 15);
+  if (posicaoX > 900) {
+    window.clearInterval(tempoDisparo);
+    tempoDisparo = null;
+    $("#fire").remove();
+    game.canFire = true;
   }
 }
