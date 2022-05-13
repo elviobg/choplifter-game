@@ -10,10 +10,23 @@ const INPUTS = {
 };
 
 const LIMITS = {
-    TOP: 2,
-    BOTTOM: 434,
-    RIGHT: 694,
-}
+    PLAYER: {
+        TOP: 2,
+        BOTTOM: 434,
+    },
+    ENEMY_HELICOPTER: {
+        LEFT: 0,
+        RIGHT: 694,
+    },
+    ENEMY_TRUCK: {
+        LEFT: 0,
+        RIGHT: 775,
+    },
+    SURVIVOR: {
+        LEFT: 0,
+        RIGHT: 906,
+    },
+};
 
 const velocidade = 5;
 let posicaoY;
@@ -36,6 +49,8 @@ function loop() {
   movePLayer();
   playerFire();
   moveEnemyHelicopter();
+  moveEnemyTruck();
+  moveSurvivor();
 }
 
 function updateScenary() {
@@ -53,9 +68,9 @@ $(document).keyup(function (e) {
 
 function movePLayer() {
   const playerPositionTop = parseInt($("#player").css("top"));
-  if (game.actions[INPUTS.up] && playerPositionTop > LIMITS.TOP) {
+  if (game.actions[INPUTS.up] && playerPositionTop > LIMITS.PLAYER.TOP) {
     $("#player").css("top", playerPositionTop - 10);
-  } else if (game.actions[INPUTS.down] && playerPositionTop <= LIMITS.BOTTOM) {
+  } else if (game.actions[INPUTS.down] && playerPositionTop <= LIMITS.PLAYER.BOTTOM) {
     $("#player").css("top", playerPositionTop + 10);
   }
 }
@@ -74,9 +89,26 @@ function moveEnemyHelicopter() {
   const posicaoX = parseInt(enemy.css("left"));
   enemy.css("left", posicaoX - velocidade);
   enemy.css("top", posicaoY);
-  if (posicaoX <= 0) {
+  if (posicaoX <= LIMITS.ENEMY_HELICOPTER.LEFT) {
     createNewEnemyHelicopter();
-    enemy.css("left", LIMITS.RIGHT);
+    enemy.css("left", LIMITS.ENEMY_HELICOPTER.RIGHT);
     enemy.css("top", posicaoY);
+  }
+}
+
+function moveEnemyTruck() {
+  const posicaoX = parseInt($("#enemyTruck").css("left"));
+  $("#enemyTruck").css("left", posicaoX - 3);
+  if (posicaoX <= LIMITS.ENEMY_TRUCK.LEFT) {
+    $("#enemyTruck").css("left", LIMITS.ENEMY_TRUCK.RIGHT);
+  }
+}
+
+function moveSurvivor() {
+  const posicaoX = parseInt($("#survivor").css("left"));
+  $("#survivor").css("left", posicaoX + 1);
+
+  if (posicaoX > LIMITS.SURVIVOR.RIGHT) {
+    $("#survivor").css("left", LIMITS.SURVIVOR.LEFT);
   }
 }
