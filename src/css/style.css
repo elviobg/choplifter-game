@@ -1,0 +1,41 @@
+@font-face {
+  font-family: Titulo;
+  src: url(../assets/fonts/ANODETONOONE.TTF);
+}
+
+h1 {
+  font-family: Titulo;
+  font-size: 40px;
+  color: #603a03;
+}
+
+body {
+  background-image: url(../assets/imgs/background.jpg);
+}
+
+#container {
+  width: 950px;
+  height: auto;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#background {
+  width: 950px;
+  height: 630px;
+  background-image: url(../assets/imgs/background_game.jpg);
+  border-color: #fff;
+  border-style: solid;
+}
+
+#inicio {
+  width: 350px;
+  height: 250px;
+  background-color: #fff;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+  text-align: center;
+  padding: 10px;
+}
