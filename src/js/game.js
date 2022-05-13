@@ -9,8 +9,14 @@ const INPUTS = {
   fire: 68,
 };
 
-const TOP = 2;
-const BOTTOM = 434;
+const LIMITS = {
+    TOP: 2,
+    BOTTOM: 434,
+    RIGHT: 694,
+}
+
+const velocidade = 5;
+let posicaoY;
 
 function start() {
   $("#start").hide();
@@ -22,12 +28,14 @@ function start() {
   $("#background").append(
     "<div id='survivor' class='survivorAnimation'></div>"
   );
+  createNewEnemyHelicopter();
 }
 
 function loop() {
   updateScenary();
   movePLayer();
   playerFire();
+  moveEnemyHelicopter();
 }
 
 function updateScenary() {
@@ -45,14 +53,30 @@ $(document).keyup(function (e) {
 
 function movePLayer() {
   const playerPositionTop = parseInt($("#player").css("top"));
-  if (game.actions[INPUTS.up] && playerPositionTop > TOP) {
+  if (game.actions[INPUTS.up] && playerPositionTop > LIMITS.TOP) {
     $("#player").css("top", playerPositionTop - 10);
-  } else if (game.actions[INPUTS.down] && playerPositionTop <= BOTTOM) {
+  } else if (game.actions[INPUTS.down] && playerPositionTop <= LIMITS.BOTTOM) {
     $("#player").css("top", playerPositionTop + 10);
   }
 }
 
 function playerFire() {
   if (game.actions[INPUTS.fire]) {
+  }
+}
+
+function createNewEnemyHelicopter() {
+  posicaoY = parseInt(Math.random() * 334);
+}
+
+function moveEnemyHelicopter() {
+  const enemy = $("#enemyHelicopter");
+  const posicaoX = parseInt(enemy.css("left"));
+  enemy.css("left", posicaoX - velocidade);
+  enemy.css("top", posicaoY);
+  if (posicaoX <= 0) {
+    createNewEnemyHelicopter();
+    enemy.css("left", LIMITS.RIGHT);
+    enemy.css("top", posicaoY);
   }
 }
