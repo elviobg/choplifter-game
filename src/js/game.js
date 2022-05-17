@@ -51,16 +51,16 @@ const CONFIG = {
   },
 };
 
-let musica = document.getElementById("soundBackground");
-musica.addEventListener(
+let musicBackground = document.getElementById("soundBackground");
+musicBackground.addEventListener(
   "ended",
   function () {
-    musica.currentTime = 0;
-    musica.play();
+    musicBackground.currentTime = 0;
+    musicBackground.play();
   },
   false
 );
-musica.play();
+musicBackground.play();
 
 function start() {
   $("#start").hide();
@@ -79,6 +79,9 @@ function start() {
 }
 
 function loop() {
+  if (game.energy == 0) {
+    return;
+  }
   updateScenary();
   movePLayer();
   playerFire();
@@ -324,5 +327,31 @@ function updateEnergyDisplay() {
     $("#energy").css("background-image", "url(assets/imgs/energy_1.png)");
   } else if (game.energy == 0) {
     $("#energy").css("background-image", "url(assets/imgs/energy_0.png)");
+    gameOver(); 
   }
+}
+
+function gameOver() {
+  $("#background").append("<div id='end'></div>");
+  $("#end").html(
+    "<h1> Game Over </h1><p>Sua pontuação foi: " +
+      game.score +
+      "</p>" +
+      "<div id='restart' onClick=restart()><h3>Jogar Novamente</h3></div>"
+  );
+  musicBackground.pause();
+  CONFIG.SOUNDS.GAMEOVER.play();
+}
+
+function restart() {
+  game.score = 0;
+  game.survivors.rescued = 0;
+  game.survivors.lost = 0;
+  game.energy= 3;
+  createNewEnemyHelicopter();
+  createNewEnemytruck();
+  updateEnergyDisplay();
+	$("#end").remove();
+  CONFIG.SOUNDS.GAMEOVER.pause();
+  musicBackground.play();
 }
