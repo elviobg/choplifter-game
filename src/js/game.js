@@ -7,7 +7,8 @@ const game = {
   survivors: {
     rescued: 0,
     lost: 0,
-  }
+  },
+  energy: 3,
 };
 
 const INPUTS = {
@@ -41,18 +42,40 @@ const CONFIG = {
     SPEED: 1,
     SCORE: 200,
   },
+  SOUNDS: {
+    SHOOT: document.getElementById("soundShoot"),
+    EXPLOSION: document.getElementById("soundExplosion"),
+    GAMEOVER: document.getElementById("soundGameover"),
+    LOST: document.getElementById("soundLost"),
+    RESCUE: document.getElementById("soundRescue"),
+  },
 };
+
+let musica = document.getElementById("soundBackground");
+musica.addEventListener(
+  "ended",
+  function () {
+    musica.currentTime = 0;
+    musica.play();
+  },
+  false
+);
+musica.play();
 
 function start() {
   $("#start").hide();
   $("#background").append("<div id='player' class='playerAnimation'></div>");
   $("#background").append("<div id='enemyTruck'></div>");
-  $("#background").append("<div id='enemyHelicopter' class='playerAnimation'></div>");
+  $("#background").append(
+    "<div id='enemyHelicopter' class='playerAnimation'></div>"
+  );
   $("#background").append(
     "<div id='survivor' class='survivorAnimation'></div>"
   );
   $("#background").append("<div id='score'></div>");
+  $("#background").append("<div id='energy'></div>");
   createNewEnemyHelicopter();
+  updateEnergyDisplay();
 }
 
 function loop() {
@@ -64,6 +87,7 @@ function loop() {
   moveSurvivor();
   checkCollisions();
   updateScore();
+  CONFIG.ENEMY_HELICOPTER.SPEED *= 1.001;
 }
 
 function updateScenary() {
@@ -94,6 +118,7 @@ function movePLayer() {
 function playerFire() {
   if (game.actions[INPUTS.fire]) {
     fire();
+    CONFIG.SOUNDS.SHOOT.play();
   }
 }
 
@@ -182,6 +207,9 @@ function checkCollisions() {
       parseInt($("#player").css("left")) + 180,
       parseInt($("#player").css("top"))
     );
+    game.energy -= 1;
+    CONFIG.SOUNDS.EXPLOSION.play();
+    updateEnergyDisplay();
   }
 
   if (fireCollisionHelicopter) {
@@ -190,12 +218,14 @@ function checkCollisions() {
       parseInt($("#enemyHelicopter").css("top"))
     );
     game.score += CONFIG.ENEMY_HELICOPTER.SCORE;
+    CONFIG.SOUNDS.EXPLOSION.play();
   } else if (fireCollisionTruck) {
     explosion(
       parseInt($("#enemyTruck").css("left")),
       parseInt($("#enemyTruck").css("top"))
     );
     game.score += CONFIG.ENEMY_TRUCK.SCORE;
+    CONFIG.SOUNDS.EXPLOSION.play();
   }
 
   if (collisionHelicopter || fireCollisionHelicopter) {
@@ -212,18 +242,22 @@ function checkCollisions() {
       parseInt($("#survivor").css("top"))
     );
     game.survivors.lost += 1;
-  } else if(survivorCollisionPlayer) {
+    CONFIG.SOUNDS.LOST.play();
+  } else if (survivorCollisionPlayer) {
     game.survivors.rescued += 1;
+    CONFIG.SOUNDS.RESCUE.play();
   }
 
-  if(survivorCollisionTruck || survivorCollisionPlayer) {
+  if (survivorCollisionTruck || survivorCollisionPlayer) {
     let recreateSurvivor = window.setInterval(recreate, 6000);
     $("#survivor").remove();
 
     function recreate() {
       window.clearInterval(recreateSurvivor);
       recreateSurvivor = null;
-      $("#background").append("<div id='survivor' class='survivorAnimation'></div>");
+      $("#background").append(
+        "<div id='survivor' class='survivorAnimation'></div>"
+      );
     }
   }
 }
@@ -270,5 +304,25 @@ function survivorDeath(x, y) {
 }
 
 function updateScore() {
-  $("#score").html("<h2> Pontos: " + game.score + " Salvos: " + game.survivors.rescued + " Mortos: " + game.survivors.lost + "</h2>");
+  $("#score").html(
+    "<h2> Pontos: " +
+      game.score +
+      " Salvos: " +
+      game.survivors.rescued +
+      " Mortos: " +
+      game.survivors.lost +
+      "</h2>"
+  );
+}
+
+function updateEnergyDisplay() {
+  if (game.energy == 3) {
+    $("#energy").css("background-image", "url(assets/imgs/energy_3.png)");
+  } else if (game.energy == 2) {
+    $("#energy").css("background-image", "url(assets/imgs/energy_2.png)");
+  } else if (game.energy == 1) {
+    $("#energy").css("background-image", "url(assets/imgs/energy_1.png)");
+  } else if (game.energy == 0) {
+    $("#energy").css("background-image", "url(assets/imgs/energy_0.png)");
+  }
 }
