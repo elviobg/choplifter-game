@@ -9,6 +9,12 @@ h1 {
   color: #603a03;
 }
 
+h2 {
+	font-family:Titulo;
+	font-size:20px;
+	color:#FFF
+}
+
 body {
   background-image: url(../assets/imgs/background.jpg);
 }

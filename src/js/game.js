@@ -3,6 +3,11 @@ const game = {
   actions: [],
   canFire: true,
   fireSpeed: null,
+  score: 0,
+  survivors: {
+    rescued: 0,
+    lost: 0,
+  }
 };
 
 const INPUTS = {
@@ -22,16 +27,19 @@ const CONFIG = {
     RIGHT: 694,
     SPEED: 5,
     POSICAO_Y: 0,
+    SCORE: 100,
   },
   ENEMY_TRUCK: {
     LEFT: 0,
     RIGHT: 775,
     SPEED: 3,
+    SCORE: 50,
   },
   SURVIVOR: {
     LEFT: 0,
     RIGHT: 906,
     SPEED: 1,
+    SCORE: 200,
   },
 };
 
@@ -39,12 +47,11 @@ function start() {
   $("#start").hide();
   $("#background").append("<div id='player' class='playerAnimation'></div>");
   $("#background").append("<div id='enemyTruck'></div>");
-  $("#background").append(
-    "<div id='enemyHelicopter' class='playerAnimation'></div>"
-  );
+  $("#background").append("<div id='enemyHelicopter' class='playerAnimation'></div>");
   $("#background").append(
     "<div id='survivor' class='survivorAnimation'></div>"
   );
+  $("#background").append("<div id='score'></div>");
   createNewEnemyHelicopter();
 }
 
@@ -56,6 +63,7 @@ function loop() {
   moveEnemyTruck();
   moveSurvivor();
   checkCollisions();
+  updateScore();
 }
 
 function updateScenary() {
@@ -164,8 +172,10 @@ function checkCollisions() {
   const fireCollisionHelicopter =
     $("#fire").collision($("#enemyHelicopter")).length > 0;
   const fireCollisionTruck = $("#fire").collision($("#enemyTruck")).length > 0;
-  const survivorCollision =
+  const survivorCollisionTruck =
     $("#survivor").collision($("#enemyTruck")).length > 0;
+  const survivorCollisionPlayer =
+    $("#survivor").collision($("#player")).length > 0;
 
   if (collisionHelicopter || collisionTruck) {
     explosion(
@@ -179,11 +189,13 @@ function checkCollisions() {
       parseInt($("#enemyHelicopter").css("left")),
       parseInt($("#enemyHelicopter").css("top"))
     );
+    game.score += CONFIG.ENEMY_HELICOPTER.SCORE;
   } else if (fireCollisionTruck) {
     explosion(
       parseInt($("#enemyTruck").css("left")),
       parseInt($("#enemyTruck").css("top"))
     );
+    game.score += CONFIG.ENEMY_TRUCK.SCORE;
   }
 
   if (collisionHelicopter || fireCollisionHelicopter) {
@@ -194,12 +206,19 @@ function checkCollisions() {
     clearFire();
   }
 
-  if (survivorCollision) {
+  if (survivorCollisionTruck) {
     survivorDeath(
       parseInt($("#survivor").css("left")),
       parseInt($("#survivor").css("top"))
     );
+    game.survivors.lost += 1;
+  } else if(survivorCollisionPlayer) {
+    game.survivors.rescued += 1;
+  }
+
+  if(survivorCollisionTruck || survivorCollisionPlayer) {
     let recreateSurvivor = window.setInterval(recreate, 6000);
+    $("#survivor").remove();
 
     function recreate() {
       window.clearInterval(recreateSurvivor);
@@ -248,4 +267,8 @@ function survivorDeath(x, y) {
     window.clearInterval(expireTime);
     expireTime = null;
   }
+}
+
+function updateScore() {
+  $("#score").html("<h2> Pontos: " + game.score + " Salvos: " + game.survivors.rescued + " Mortos: " + game.survivors.lost + "</h2>");
 }

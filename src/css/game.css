@@ -79,3 +79,29 @@
 	height:87px;
 	position:absolute;
 }
+
+#survivor_death {
+	width:44px;
+	height:51px;
+	position:absolute;
+}
+
+.survivorDeathAnimation {
+	width:44px;
+	height:51px;
+	background-image:url(../imgs/amigo_explosao.png);
+	animation:survivorDeath .5s steps(7) infinite;
+}
+
+@keyframes survivorDeath {
+	from {background-position:0px;}
+	to {background-position:-308px;}
+}
+
+#score {
+	width: 450px;
+	height: 50px;
+	position: absolute;
+	left: 5px;
+	top: 590px;
+}
