@@ -73,3 +73,9 @@
     background-position: -528px;
   }
 }
+
+#explosion {
+	width:15px;
+	height:87px;
+	position:absolute;
+}

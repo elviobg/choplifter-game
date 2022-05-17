@@ -55,6 +55,7 @@ function loop() {
   moveEnemyHelicopter();
   moveEnemyTruck();
   moveSurvivor();
+  checkCollisions();
 }
 
 function updateScenary() {
@@ -88,8 +89,23 @@ function playerFire() {
   }
 }
 
+function clearFire() {
+  window.clearInterval(game.fireSpeed);
+  game.fireSpeed = null;
+  $("#fire").remove();
+  game.canFire = true;
+}
+
 function createNewEnemyHelicopter() {
   CONFIG.ENEMY_HELICOPTER.POSICAO_Y = parseInt(Math.random() * 334);
+  const enemy = $("#enemyHelicopter");
+  enemy.css("left", CONFIG.ENEMY_HELICOPTER.RIGHT);
+  enemy.css("top", CONFIG.ENEMY_HELICOPTER.POSICAO_Y);
+}
+
+function createNewEnemytruck() {
+  const enemy = $("#enemyTruck");
+  enemy.css("left", CONFIG.ENEMY_TRUCK.RIGHT);
 }
 
 function moveEnemyHelicopter() {
@@ -99,8 +115,6 @@ function moveEnemyHelicopter() {
   enemy.css("top", CONFIG.ENEMY_HELICOPTER.POSICAO_Y);
   if (posicaoX <= CONFIG.ENEMY_HELICOPTER.LEFT) {
     createNewEnemyHelicopter();
-    enemy.css("left", CONFIG.ENEMY_HELICOPTER.RIGHT);
-    enemy.css("top", CONFIG.ENEMY_HELICOPTER.POSICAO_Y);
   }
 }
 
@@ -108,7 +122,7 @@ function moveEnemyTruck() {
   const posicaoX = parseInt($("#enemyTruck").css("left"));
   $("#enemyTruck").css("left", posicaoX - CONFIG.ENEMY_TRUCK.SPEED);
   if (posicaoX <= CONFIG.ENEMY_TRUCK.LEFT) {
-    $("#enemyTruck").css("left", CONFIG.ENEMY_TRUCK.RIGHT);
+    createNewEnemytruck();
   }
 }
 
@@ -131,7 +145,7 @@ function fire() {
     $("#background").append("<div id='fire'></div");
     $("#fire").css("top", topoTiro);
     $("#fire").css("left", tiroX);
-    game.fireSpeed= window.setInterval(executaDisparo, 30);
+    game.fireSpeed = window.setInterval(executaDisparo, 30);
   }
 }
 
@@ -139,9 +153,99 @@ function executaDisparo() {
   const posicaoX = parseInt($("#fire").css("left"));
   $("#fire").css("left", posicaoX + 15);
   if (posicaoX > 900) {
-    window.clearInterval(game.fireSpeed);
-    game.fireSpeed = null;
-    $("#fire").remove();
-    game.canFire = true;
+    clearFire();
+  }
+}
+
+function checkCollisions() {
+  const collisionHelicopter =
+    $("#player").collision($("#enemyHelicopter")).length > 0;
+  const collisionTruck = $("#player").collision($("#enemyTruck")).length > 0;
+  const fireCollisionHelicopter =
+    $("#fire").collision($("#enemyHelicopter")).length > 0;
+  const fireCollisionTruck = $("#fire").collision($("#enemyTruck")).length > 0;
+  const survivorCollision =
+    $("#survivor").collision($("#enemyTruck")).length > 0;
+
+  if (collisionHelicopter || collisionTruck) {
+    explosion(
+      parseInt($("#player").css("left")) + 180,
+      parseInt($("#player").css("top"))
+    );
+  }
+
+  if (fireCollisionHelicopter) {
+    explosion(
+      parseInt($("#enemyHelicopter").css("left")),
+      parseInt($("#enemyHelicopter").css("top"))
+    );
+  } else if (fireCollisionTruck) {
+    explosion(
+      parseInt($("#enemyTruck").css("left")),
+      parseInt($("#enemyTruck").css("top"))
+    );
+  }
+
+  if (collisionHelicopter || fireCollisionHelicopter) {
+    createNewEnemyHelicopter();
+    clearFire();
+  } else if (collisionTruck || fireCollisionTruck) {
+    createNewEnemytruck();
+    clearFire();
+  }
+
+  if (survivorCollision) {
+    survivorDeath(
+      parseInt($("#survivor").css("left")),
+      parseInt($("#survivor").css("top"))
+    );
+    let recreateSurvivor = window.setInterval(recreate, 6000);
+
+    function recreate() {
+      window.clearInterval(recreateSurvivor);
+      recreateSurvivor = null;
+      $("#background").append("<div id='survivor' class='survivorAnimation'></div>");
+    }
+  }
+}
+
+function explosion(x, y) {
+  $("#background").append("<div id='explosion'></div");
+  $("#explosion").css("background-image", "url(assets/imgs/explosion.png)");
+  const div = $("#explosion");
+
+  div.css("top", y);
+  div.css("left", x);
+  div.animate({ width: 200, opacity: 0 }, "slow");
+
+  let expireTime = window.setInterval(removeExplosion, 1500);
+
+  function removeExplosion() {
+    div.remove();
+    window.clearInterval(expireTime);
+    expireTime = null;
+  }
+}
+
+function survivorDeath(x, y) {
+  $("#background").append(
+    "<div id='survivor_death' class='survivorDeathAnimation'></div"
+  );
+  $("#survivor_death").css(
+    "background-image",
+    "url(assets/imgs/survivor_death.png)"
+  );
+  const div = $("#survivor_death");
+
+  div.css("top", y);
+  div.css("left", x);
+  $("#survivor").remove();
+
+  var expireTime = window.setInterval(removeDeath, 1500);
+
+  function removeDeath() {
+    div.remove();
+    window.clearInterval(expireTime);
+    expireTime = null;
   }
 }
